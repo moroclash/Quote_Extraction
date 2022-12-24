@@ -1,0 +1,8 @@
+reset:
+  cmd: python -m spacy run reset
+  script:
+    - rm -rf assets corpus metrics training project.lock
+  deps: []
+  outs: []
+  spacy_version: 3.3.0
+  spacy_git_version: 497a708c7

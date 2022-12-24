@@ -1,0 +1,8 @@
+typer
+numpy
+tqdm
+wasabi
+setuptools
+wheel
+spacy-experimental
+sentence_transformers

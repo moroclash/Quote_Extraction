@@ -1,0 +1,259 @@
+title: "Comparing SpanCat and NER using a corpus of biomedical literature (GENIA)"
+description: |
+  This project demonstrates how spaCy's Span Categorization (SpanCat) and
+  Named-Entity Recognition (NER) perform on different types of entities. Here, we used
+  a dataset of biomedical literature containing both overlapping and non-overlapping spans.
+
+vars:
+  name: "ner_spancat_compare"
+  version: "1.0.0"
+  gpu_id: -1
+  spans_key: "sc"
+  # Labels
+  quote: "QOUTE"
+  cue: "CUE"
+  speaker: "SPEAKER"
+
+  #span_finder
+  config: "config_tok2vec" # config_tok2vec, config_trf
+  suggester: "span_finder" # ngram, span_finder
+  eval_split: 0.25
+  spancat_model: "training/spancat/${vars.config}_${vars.suggester}/model-best"
+
+directories:
+  - "assets"
+  - "configs"
+  - "corpus"
+  - "corpus/ner"
+  - "metrics"
+  - "scripts"
+  - "training"
+
+workflows:
+  all:
+    - "install"
+    - "convert"
+    - "create-ner"
+    - "train-ner"
+    - "assemble-ner"
+    - "train-spancat"
+    - "evaluate-ner"
+    - "evaluate-spancat"
+  spancat:
+    - "install"
+    - "convert"
+    - "train-spancat"
+    - "evaluate-spancat"
+  ner:
+    - "install"
+    - "convert"
+    - "create-ner"
+    - "train-ner"
+    - "evaluate-ner"
+    - "assemble-ner"
+  spancat_span_finder:
+    - "install"
+    - "convert"
+    - "train_spancat"
+    - "evaluate_spancat"
+
+assets:
+  - dest: "assets/riqua.tar.gz"
+    description: "The training RiQuA dataset"
+    url: https://www.ims.uni-stuttgart.de/documents/ressourcen/korpora/riqua/riqua.tar.gz
+  - dest: "assets/DirectQuote/truecased.txt"
+    description: "get the DirectQuote dataset"
+    url: "https://github.com/THUNLP-MT/DirectQuote/blob/main/data/truecased.txt"
+
+
+commands:
+  - name: "install"
+    help: "Install dependencies"
+    script:
+      - "pip install --user -r requirements.txt"
+      - "python -m spacy download en_core_web_lg"
+      - "python -m spacy download en_core_web_md"
+      - "python -m spacy download en_core_web_sm"
+      - "python -m spacy download en_core_web_trf"
+
+  - name: "convert"
+    help: "Convert datasets into the spaCy format"
+    script:
+      - "tar -xf assets/riqua.tar.gz -C assets/"
+      - "python -m scripts.convert -o corpus --split-ratio 0.3"
+    deps:
+      - "assets/DirectQuote/truecased.txt"
+      - "assets/riqua.tar.gz"
+    outputs:
+      - "corpus/train.spacy"
+      - "corpus/test.spacy"
+
+  - name: "reset"
+    help: "remove all files and reset all changes"
+    script:
+      - "rm -rf assets corpus metrics training project.lock"
+
+  - name: "create-ner"
+    help: "Split corpus into separate NER datasets for each label"
+    script:
+      - >-
+        python -m scripts.create_ner
+        --train corpus/train.spacy
+        --test corpus/test.spacy
+        --output-dir corpus/ner
+    deps:
+      - "corpus/train.spacy"
+      - "corpus/test.spacy"
+    outputs:
+      - "corpus/ner/train_${vars.quote}.spacy"
+      - "corpus/ner/train_${vars.cue}.spacy"
+      - "corpus/ner/train_${vars.speaker}.spacy"
+      - "corpus/ner/test_${vars.quote}.spacy"
+      - "corpus/ner/test_${vars.cue}.spacy"
+      - "corpus/ner/test_${vars.speaker}.spacy"
+
+  - name: "train-ner"
+    help: "Train an NER model for each label"
+    script:
+      - >-
+        python -m spacy train
+        configs/ner.cfg
+        --output training/ner/${vars.quote}
+        --paths.train corpus/ner/train_${vars.quote}.spacy
+        --paths.dev corpus/ner/test_${vars.quote}.spacy
+        --gpu-id ${vars.gpu_id}
+      - >-
+        python -m spacy train
+        configs/ner.cfg
+        --output training/ner/${vars.cue}
+        --paths.train corpus/ner/train_${vars.cue}.spacy
+        --paths.dev corpus/ner/test_${vars.cue}.spacy
+        --gpu-id ${vars.gpu_id}
+      - >-
+        python -m spacy train
+        configs/ner.cfg
+        --output training/ner/${vars.speaker}
+        --paths.train corpus/ner/train_${vars.speaker}.spacy
+        --paths.dev corpus/ner/test_${vars.speaker}.spacy
+        --gpu-id ${vars.gpu_id}
+    deps:
+      - "corpus/ner/train_${vars.quote}.spacy"
+      - "corpus/ner/train_${vars.cue}.spacy"
+      - "corpus/ner/train_${vars.speaker}.spacy"
+      - "corpus/ner/test_${vars.quote}.spacy"
+      - "corpus/ner/test_${vars.cue}.spacy"
+      - "corpus/ner/test_${vars.speaker}.spacy"
+    outputs:
+      - "training/ner/${vars.quote}/model-best"
+      - "training/ner/${vars.cue}/model-best"
+      - "training/ner/${vars.speaker}/model-best"
+
+  - name: "train-spancat"
+    help: "Train a SpanCat model"
+    script:
+      - >-
+        python -m spacy train
+        configs/spancat.cfg
+        --output training/spancat/
+        --paths.train corpus/train.spacy
+        --paths.dev corpus/test.spacy
+        --gpu-id ${vars.gpu_id}
+    deps:
+      - "corpus/train.spacy"
+      - "corpus/dev.spacy"
+      - "corpus/test.spacy"
+    outputs:
+      - "training/spancat/model-best"
+
+  - name: "evaluate-ner"
+    help: "Evaluate all NER models"
+    script:
+      - "mkdir -p metrics/ner"
+      - >-
+        python -m spacy evaluate
+        training/ner/${vars.quote}/model-best
+        corpus/ner/test_${vars.quote}.spacy
+        --output metrics/ner/scores_${vars.quote}.json
+      - >-
+        python -m spacy evaluate
+        training/ner/${vars.cue}/model-best
+        corpus/ner/test_${vars.cue}.spacy
+        --output metrics/ner/scores_${vars.cue}.json
+      - >-
+        python -m spacy evaluate
+        training/ner/${vars.speaker}/model-best
+        corpus/ner/test_${vars.speaker}.spacy
+        --output metrics/ner/scores_${vars.speaker}.json
+    deps:
+      - "training/ner/${vars.quote}/model-best"
+      - "training/ner/${vars.cue}/model-best"
+      - "training/ner/${vars.speaker}/model-best"
+      - "corpus/ner/test_${vars.quote}.spacy"
+      - "corpus/ner/test_${vars.cue}.spacy"
+      - "corpus/ner/test_${vars.speaker}.spacy"
+    outputs:
+      - "metrics/ner/scores_${vars.quote}.json"
+      - "metrics/ner/scores_${vars.cue}.json"
+      - "metrics/ner/scores_${vars.speaker}.json"
+
+  - name: "assemble-ner"
+    help: "Assemble all NER models into a single pipeline"
+    script:
+      - >-
+        python -m spacy assemble
+        configs/ner_assemble.cfg
+        training/ner-assemble/
+        --code scripts/transfer_ent_component.py
+        --paths.ner_${vars.quote} training/ner/${vars.quote}/model-best
+        --paths.ner_${vars.cue} training/ner/${vars.cue}/model-best
+        --paths.ner_${vars.speaker} training/ner/${vars.speaker}/model-best
+        --paths.spans_key ${vars.spans_key}
+        --verbose
+    outputs:
+      - "training/ner-assemble/"
+
+  - name: "evaluate-spancat"
+    help: "Evaluate SpanCat model"
+    script:
+      - "mkdir -p metrics/spancat"
+      - >-
+        python -m spacy evaluate
+        training/spancat/model-best
+        corpus/test.spacy
+        --output metrics/spancat/scores.json
+    deps:
+      - "training/spancat/model-best"
+      - "corpus/test.spacy"
+    outputs:
+      - "metrics/spancat/scores.json"
+  
+  - name: "train_spancat"
+    help: "Train a spancat model on the `dataset` defined in `project.yml`"
+    script:
+      - >- 
+        python -m spacy train configs/${vars.suggester}/${vars.config}.cfg
+        --output training/spancat/${vars.config}_${vars.suggester}/
+        --paths.train corpus/train.spacy
+        --paths.dev corpus/test.spacy
+        --gpu-id ${vars.gpu_id} 
+        --vars.spans_key ${vars.spans_key}
+    deps:
+      - "configs/${vars.suggester}/${vars.config}.cfg"
+      - "corpus/train.spacy"
+      - "dcorpus/test.spacy"
+    outputs:
+      - "${vars.spancat_model}"
+
+  - name: "evaluate_spancat"
+    help: "Evaluate a trained spancat model  on the `dataset` defined in `project.yml`"
+    script:
+      - >- 
+        python -m spacy evaluate ${vars.spancat_model} corpus/test.spacy 
+        --output metrics/spancat_${vars.config}_${vars.suggester}.json 
+        --gpu-id ${vars.gpu_id}
+      - "python scripts/suggester_evaluation.py ${vars.spans_key} ${vars.spancat_model} corpus/test.spacy"
+    deps:
+      - "${vars.spancat_model}"
+      - "corpus/test.spacy"
+    outputs:
+      - metrics/spancat_${vars.config}_${vars.suggester}.json
