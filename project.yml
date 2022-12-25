@@ -7,7 +7,7 @@ description: |
 vars:
   name: "ner_spancat_compare"
   version: "1.0.0"
-  gpu_id: -1
+  gpu_id: 0
   spans_key: "sc"
   # Labels
   quote: "QOUTE"
@@ -227,7 +227,17 @@ commands:
     outputs:
       - "metrics/spancat/scores.json"
   
-  - name: "train_spancat"
+  
+  - name: "debug"
+    help: "debug the data and get some insights."
+    script:
+      - "python -m spacy debug data cconfigs/spancat.cfg --paths.train corpus/train.spacy --paths.dev corpus/test.spacy"
+    deps:
+      - "corpus/train.spacy"
+      - "corpus/test.spacy"
+
+
+  - name: "train_spancat_finder"
     help: "Train a spancat model on the `dataset` defined in `project.yml`"
     script:
       - >- 
