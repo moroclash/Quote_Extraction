@@ -13,6 +13,7 @@ vars:
   quote: "QOUTE"
   cue: "CUE"
   speaker: "SPEAKER"
+  test_ratio: 0.9
 
   #span_finder
   config: "config_tok2vec" # config_tok2vec, config_trf
@@ -80,7 +81,7 @@ commands:
     help: "Convert datasets into the spaCy format"
     script:
       - "tar -xf assets/riqua.tar.gz -C assets/"
-      - "python -m scripts.convert -o corpus --split-ratio 0.3"
+      - "python -m scripts.convert -o corpus --split-ratio ${vars.test_ratio}"
     deps:
       - "assets/DirectQuote/truecased.txt"
       - "assets/riqua.tar.gz"
