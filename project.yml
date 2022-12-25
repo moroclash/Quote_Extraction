@@ -54,8 +54,8 @@ workflows:
   spancat_span_finder:
     - "install"
     - "convert"
-    - "train_spancat"
-    - "evaluate_spancat"
+    - "train_spancat_finder"
+    - "evaluate_spancat_finder"
 
 assets:
   - dest: "assets/riqua.tar.gz"
@@ -227,7 +227,7 @@ commands:
     outputs:
       - "metrics/spancat/scores.json"
   
-  
+
   - name: "debug"
     help: "debug the data and get some insights."
     script:
@@ -254,7 +254,7 @@ commands:
     outputs:
       - "${vars.spancat_model}"
 
-  - name: "evaluate_spancat"
+  - name: "evaluate_spancat_finder"
     help: "Evaluate a trained spancat model  on the `dataset` defined in `project.yml`"
     script:
       - >- 
