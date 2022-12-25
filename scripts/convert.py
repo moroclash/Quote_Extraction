@@ -166,10 +166,10 @@ def main(
     Cue_verbs = []
     all_docs = []
 
-    with msg.loading(f"Processing RiQuA Dataset..."):
-        docs_RiQuA, Cue_verbs = convert_RiQuA_to_docs('assets/riqua/merged')
-        all_docs += docs_RiQuA
-        msg.good(f"Processing Done :: {len(docs_RiQuA)} Docs")
+    # with msg.loading(f"Processing RiQuA Dataset..."):
+    #     docs_RiQuA, Cue_verbs = convert_RiQuA_to_docs('assets/riqua/merged')
+    #     all_docs += docs_RiQuA
+    #     msg.good(f"Processing Done :: {len(docs_RiQuA)} Docs")
 
     with msg.loading(f"Processing DirectQuote Dataset..."):
         with open('assets/DirectQuote/truecased.txt', "r", encoding="utf-8") as f:
