@@ -10,7 +10,7 @@ vars:
   gpu_id: 0
   spans_key: "sc"
   # Labels
-  quote: "QOUTE"
+  quote: "QUOTE"
   cue: "CUE"
   speaker: "SPEAKER"
   test_ratio: 0.9
