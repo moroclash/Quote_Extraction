@@ -275,11 +275,11 @@ def main(
     with msg.loading(f"Saving into DocBin..."):
         doc_bin = DocBin(docs=train_set)
         doc_bin.to_disk(f"{output_path}/train.spacy")
-    msg.good(f"Saved to {output_path}/train.spacy")
+        msg.good(f"Saved to {output_path}/train.spacy")
 
         doc_bin = DocBin(docs=test_set)
         doc_bin.to_disk(f"{output_path}/test.spacy")
-    msg.good(f"Saved to {output_path}/test.spacy")
+        msg.good(f"Saved to {output_path}/test.spacy")
 
 
 if __name__ == "__main__":
