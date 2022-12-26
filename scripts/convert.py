@@ -181,7 +181,7 @@ def convert_Polnear_to_docs(
     """Parse Polnear dataset into spaCy docs
     """
 
-    with open(file_path, 'r') as f:
+    with open(folder_path, 'r') as f:
         data_ = f.readlines()
     
     nlp = spacy.blank("en")
