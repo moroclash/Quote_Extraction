@@ -154,7 +154,7 @@ def convert_RiQuA_to_docs(
     """Parse RiQuA dataset into spaCy docs
     """
 
-    with open(file_path, 'r') as f:
+    with open(folder_path, 'r') as f:
         data_ = f.readlines()
     
     nlp = spacy.blank("en")
