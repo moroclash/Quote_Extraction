@@ -150,7 +150,7 @@ def convert_DirectQuote_to_docs(
 
 def convert_RiQuA_to_docs(
     folder_path: str,
-) -> List[Doc], List[str]:
+) -> List[Doc]:
     """Parse RiQuA dataset into spaCy docs
     """
 
@@ -177,7 +177,7 @@ def convert_RiQuA_to_docs(
 
 def convert_Polnear_to_docs(
     folder_path: str,
-) -> List[Doc], List[str]:
+) -> List[Doc]:
     """Parse Polnear dataset into spaCy docs
     """
 
