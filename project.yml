@@ -59,9 +59,24 @@ workflows:
     - "evaluate_spancat_finder"
 
 assets:
-  - dest: "assets/riqua.tar.gz"
-    description: "The training RiQuA dataset"
-    url: https://www.ims.uni-stuttgart.de/documents/ressourcen/korpora/riqua/riqua.tar.gz
+  - dest: "assets/riqua_test.txt"
+    description: "The testing RiQuA dataset"
+    url: https://github.com/Ahmed-Khaled-Saleh/CofeNet/blob/main/res/riqua/test.txt
+  - dest: "assets/riqua_train.txt"
+    description: "The train RiQuA dataset"
+    url: https://github.com/Ahmed-Khaled-Saleh/CofeNet/blob/main/res/riqua/train.txt
+  - dest: "assets/riqua_valid.txt"
+    description: "The valid RiQuA dataset"
+    url: https://github.com/Ahmed-Khaled-Saleh/CofeNet/blob/main/res/riqua/valid.txtv
+  - dest: "assets/polnear_test.txt"
+    description: "The test polnear dataset"
+    url: https://github.com/Ahmed-Khaled-Saleh/CofeNet/blob/main/res/polnear/test.txt
+  - dest: "assets/polnear_train.txt"
+    description: "The train polnear dataset"
+    url: https://github.com/Ahmed-Khaled-Saleh/CofeNet/blob/main/res/polnear/train.txt
+  - dest: "assets/polnear_valid.txt"
+    description: "The valid polnear dataset"
+    url: https://github.com/Ahmed-Khaled-Saleh/CofeNet/blob/main/res/polnear/valid.txt
   - dest: "assets/DirectQuote/truecased.txt"
     description: "get the DirectQuote dataset"
     url: "https://github.com/THUNLP-MT/DirectQuote/blob/main/data/truecased.txt"
