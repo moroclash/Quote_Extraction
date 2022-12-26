@@ -67,7 +67,7 @@ assets:
     url: https://github.com/Ahmed-Khaled-Saleh/CofeNet/blob/main/res/riqua/train.txt
   - dest: "assets/riqua_valid.txt"
     description: "The valid RiQuA dataset"
-    url: https://github.com/Ahmed-Khaled-Saleh/CofeNet/blob/main/res/riqua/valid.txtv
+    url: https://github.com/Ahmed-Khaled-Saleh/CofeNet/blob/main/res/riqua/valid.txt
   - dest: "assets/polnear_test.txt"
     description: "The test polnear dataset"
     url: https://github.com/Ahmed-Khaled-Saleh/CofeNet/blob/main/res/polnear/test.txt
