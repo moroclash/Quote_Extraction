@@ -245,17 +245,17 @@ def main(
     with msg.loading(f"Processing Polnear Dataset..."):
         len_docs_polnear = 0
         docs_polnear, Cue_verbs = convert_Polnear_to_docs('assets/polnear_train.txt')
-        len_docs_Polnear += len(docs_polnear)
+        len_docs_polnear += len(docs_polnear)
         all_docs += docs_polnear
         all_Cue_verbs += Cue_verbs 
 
         docs_polnear, Cue_verbs = convert_Polnear_to_docs('assets/polnear_test.txt')
-        len_docs_Polnear += len(docs_polnear)
+        len_docs_polnear += len(docs_polnear)
         all_docs += docs_polnear
         all_Cue_verbs += Cue_verbs 
 
         docs_polnear, Cue_verbs = convert_Polnear_to_docs('assets/polnear_valid.txt')
-        len_docs_Polnear += len(docs_polnear)
+        len_docs_polnear += len(docs_polnear)
         all_docs += docs_polnear
         all_Cue_verbs += Cue_verbs 
     msg.good(f"Processing Done :: {len_docs_polnear} Docs")
