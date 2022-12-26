@@ -98,7 +98,12 @@ commands:
       - "python -m scripts.convert -o corpus --split-ratio ${vars.test_ratio}"
     deps:
       - "assets/DirectQuote/truecased.txt"
-      - "assets/riqua.tar.gz"
+      - "assets/riqua_train.txt"
+      - "assets/riqua_test.txt"
+      - "assets/riqua_valid.txt"
+      - "assets/polnear_train.txt"
+      - "assets/polnear_test.txt"
+      - "assets/polnear_valid.txt"
     outputs:
       - "corpus/train.spacy"
       - "corpus/test.spacy"
