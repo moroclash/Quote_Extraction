@@ -95,7 +95,6 @@ commands:
   - name: "convert"
     help: "Convert datasets into the spaCy format"
     script:
-      - "tar -xf assets/riqua.tar.gz -C assets/"
       - "python -m scripts.convert -o corpus --split-ratio ${vars.test_ratio}"
     deps:
       - "assets/DirectQuote/truecased.txt"
