@@ -136,21 +136,21 @@ commands:
     help: "Train an NER model for each label"
     script:
       - >-
-        python -m spacy train
+        python -m spacy ray train
         configs/ner.cfg
         --output training/ner/${vars.quote}
         --paths.train corpus/ner/train_${vars.quote}.spacy
         --paths.dev corpus/ner/test_${vars.quote}.spacy
         --gpu-id ${vars.gpu_id}
       - >-
-        python -m spacy train
+        python -m spacy ray train
         configs/ner.cfg
         --output training/ner/${vars.cue}
         --paths.train corpus/ner/train_${vars.cue}.spacy
         --paths.dev corpus/ner/test_${vars.cue}.spacy
         --gpu-id ${vars.gpu_id}
       - >-
-        python -m spacy train
+        python -m spacy ray train
         configs/ner.cfg
         --output training/ner/${vars.speaker}
         --paths.train corpus/ner/train_${vars.speaker}.spacy
@@ -172,7 +172,7 @@ commands:
     help: "Train a SpanCat model"
     script:
       - >-
-        python -m spacy train
+        python -m spacy ray train
         configs/spancat.cfg
         --output training/spancat/
         --paths.train corpus/train.spacy
@@ -261,7 +261,7 @@ commands:
     help: "Train a spancat model on the `dataset` defined in `project.yml`"
     script:
       - >- 
-        python -m spacy train configs/${vars.suggester}/${vars.config}.cfg
+        python -m spacy ray train configs/${vars.suggester}/${vars.config}.cfg
         --output training/spancat/${vars.config}_${vars.suggester}/
         --paths.train corpus/train.spacy
         --paths.dev corpus/test.spacy
